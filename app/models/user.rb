@@ -12,7 +12,7 @@
 class User < ApplicationRecord
   attr_reader :password
 
-  validates :username, presence: { message: "Username can\'t be blank" }
+  validates :username, presence: { message: "can\'t be blank" }
   validates :password_digest, presence: { message: "Password can\'t be blank" }
   validates :username, uniqueness: true
   validates :password, length: { minimum: 6 }, allow_nil: true
