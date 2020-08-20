@@ -4,8 +4,6 @@
 #
 #  id              :bigint           not null, primary key
 #  username        :string           not null
-#  fname           :string           not null
-#  lname           :string           not null
 #  password_digest :string           not null
 #  session_token   :string
 #  created_at      :datetime         not null
@@ -21,6 +19,7 @@ RSpec.describe User, type: :model do
   end
 
   it { should validate_presence_of(:username).with_message("Username can\'t be blank") }
+  it { should validate_uniqueness_of(:username)}
   it { should validate_presence_of(:password_digest).with_message("Password can\'t be blank") }
   it { should validate_length_of(:password).is_at_least(6) }
 
@@ -34,5 +33,5 @@ RSpec.describe User, type: :model do
     end
   end
 
-  
+
 end
