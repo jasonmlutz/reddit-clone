@@ -1,24 +1,14 @@
-# README
+# Reddit clone
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+App Academy Rails project [(instructions)](https://open.appacademy.io/learn/full-stack-online/rails/redditclone).
 
-Things you may want to cover:
 
-* Ruby version
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+#### Goals:
+1. Build using TDD process.
+1. Build auth framework with minimal use of notes and past projects.
+1. Mindfully create html elements for future styling with CSS.
+1. Create visual elements similar to [(Reddit)](https://www.reddit.com/) using CSS.
+1. Use basic JavaScript tools for interactive site features.
+1. Demonstrate understanding of advanced Rails forms (e.g. checkboxes).
+1. Build models with polymorphic associations (e.g. tags).
