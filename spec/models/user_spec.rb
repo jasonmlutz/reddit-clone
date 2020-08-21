@@ -18,10 +18,11 @@ RSpec.describe User, type: :model do
       password: "good_password")
   end
 
-  it { should validate_presence_of(:username).with_message("Username can\'t be blank") }
+  it { should validate_presence_of(:username).with_message("can\'t be blank") }
   it { should validate_uniqueness_of(:username)}
   it { should validate_presence_of(:password_digest).with_message("Password can\'t be blank") }
   it { should validate_length_of(:password).is_at_least(6) }
+  it {should validate_presence_of(:session_token)}
 
   describe '#is_password?' do
     it 'identifies a correct password' do
@@ -61,5 +62,27 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#reset_session_token!' do
+    before(:all) do
+      @user = User.new(username: 'jason', password: 'good_password')
+      @initial_session_token = @user.session_token
+      @user.reset_session_token!
+    end
 
+    after(:all) do
+      @user.destroy
+    end
+
+    it "sets a session token as a string" do
+      expect(@user.session_token).to be_a(String)
+    end
+    it "sets a session token to be a non-empty string" do
+      expect(@user.session_token.length).to be > 0
+    end
+    it "*almost always* sets a new session token" do
+      expect(@user.session_token).not_to eq(@initial_session_token)
+    end
+  end
+
+  
 end
