@@ -9,15 +9,18 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  shared_examples "redirects to new_user_url and sets flash errors" do
+  shared_examples "renders new with errors and 422 status" do
     before(:each) do
       post :create, params: path_options
     end
-    it "redirects to new_user_url" do
-      expect(response).to redirect_to new_user_url
+    it "renders new template" do
+      expect(response).to render_template("new")
     end
     it "sets flash errors" do
       should set_flash[:errors]
+    end
+    it "has 422 status" do
+      expect(response).to have_http_status(422)
     end
   end
 
@@ -25,18 +28,18 @@ RSpec.describe UsersController, type: :controller do
     context "with invalid params" do
       context "missing username" do
         let(:path_options) { {user: {password: 'good_password'}} }
-        it_behaves_like "redirects to new_user_url and sets flash errors"
+        it_behaves_like "renders new with errors and 422 status"
         # it_behaves_like "sets flash errors"
       end
 
       context "missing password" do
         let(:path_options) { {user: {username: 'jason'}} }
-        it_behaves_like "redirects to new_user_url and sets flash errors"
+        it_behaves_like "renders new with errors and 422 status"
         end
 
       context "password too short" do
         let(:path_options) { { user: { username: 'jason', password: 'smol'}}}
-        it_behaves_like "redirects to new_user_url and sets flash errors"
+        it_behaves_like "renders new with errors and 422 status"
       end
 
       context "username exists in db" do
@@ -49,11 +52,14 @@ RSpec.describe UsersController, type: :controller do
         after(:all) do
           User.last.destroy
         end
-        it "redirects to new_user_url" do
-          expect(response).to redirect_to new_user_url
+        it "renders new template" do
+          expect(response).to render_template("new")
         end
         it "sets flash errors" do
           should set_flash[:errors]
+        end
+        it "has 422 status" do
+          expect(response).to have_http_status(422)
         end
       end
     end
@@ -61,9 +67,10 @@ RSpec.describe UsersController, type: :controller do
     context "with valid params" do
       before(:each) do
         post :create, params: { user: { username: 'jason', password: 'good_password'}}
+        @user = User.last
       end
       it "redirects to show" do
-        expect(response).to render_template("show")
+        expect(response).to redirect_to user_url(@user)
       end
       it "does not set flash errors" do
         should_not set_flash[:errors]
