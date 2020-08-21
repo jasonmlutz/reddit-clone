@@ -33,5 +33,33 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'User::find_by_credentials' do
+    before(:all) do
+      @new_user = User.new(username: 'jason', password: 'good_password')
+      @new_user.save!
+    end
+    after(:all) do
+      @new_user.destroy
+    end
+
+    context "with invalid credentials" do
+      it "returns nil with correct username + incorrect password" do
+        expect(User.find_by_credentials('jason', 'bad_password')).to be_nil
+      end
+      it "returns nil with incorrect username + correct password" do
+        expect(User.find_by_credentials('jarmo', 'good_password')).to be_nil
+      end
+      it "returns nil with incorrect username + password" do
+        expect(User.find_by_credentials('jarmo', 'bad_password')).to be_nil
+      end
+    end
+
+    context "with valid credentials" do
+      it "returns correct user record" do
+        expect(User.find_by_credentials('jason', 'good_password')).to eq(@new_user)
+      end
+    end
+  end
+
 
 end
