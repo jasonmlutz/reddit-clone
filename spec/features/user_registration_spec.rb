@@ -27,9 +27,6 @@ RSpec.feature "UserRegistrations", type: :feature do
       expect(user).to_not be_nil
     end
 
-    scenario 'user is logged it' do
-      user = User.find_by(username: 'jason')
-      expect(current_user).to eq(user)
-    end
+    scenario 'user is displayed as logged in'
   end
 end
