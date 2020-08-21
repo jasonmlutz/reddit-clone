@@ -35,27 +35,50 @@ RSpec.describe SessionsController, type: :controller do
   describe 'POST #create' do
     context "with invalid params" do
       context "with correct username, incorrect password" do
-        let(:path_options) { { session: {username: 'jason', password: 'bad_password'}}}
+        let(:path_options) { { user: {username: 'jason', password: 'bad_password'}}}
         it_behaves_like "renders new session template with 401 and errors"
       end
 
       context "with incorrect username, incorrect password" do
-        let(:path_options) { { session: {username: 'jarmo', password: 'good_password'}}}
+        let(:path_options) { { user: {username: 'jarmo', password: 'good_password'}}}
         it_behaves_like "renders new session template with 401 and errors"
       end
 
       context "with username and password both incorrect" do
-        let(:path_options) { { session: {username: 'jarmo', password: 'bad_password'}}}
+        let(:path_options) { { user: {username: 'jarmo', password: 'bad_password'}}}
         it_behaves_like "renders new session template with 401 and errors"
       end
     end
 
     context "with valid params" do
-      it "renders show template"
+    before(:each) do
+      @user = User.new(username: 'jason', password: 'good_password')
+      @user.save!
+      post :create, params: { user: { username: 'jason', password: 'good_password'}}
+    end
+
+    after(:each) do
+      @user.destroy
+    end
+      it "renders show template" do
+        expect(response).to redirect_to user_url(@user)
+      end
     end
   end
 
   describe 'DELETE #destroy' do
-    pending "add test for DELETE #destroy"
+    before(:each) do
+      @user = User.new(username: 'jason', password: 'good_password')
+      @user.save!
+      post :create, params: { user: { username: 'jason', password: 'good_password'}}
+      delete :destroy
+    end
+
+    after(:each) do
+      @user.destroy
+    end
+    it "renders new template" do
+      expect(response).to render_template("new")
+    end
   end
 end
