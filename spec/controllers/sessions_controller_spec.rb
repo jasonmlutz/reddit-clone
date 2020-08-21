@@ -9,7 +9,7 @@ RSpec.describe SessionsController, type: :controller do
     end
   end
 
-  shared_examples "redirects to new_session_url and sets flash errors" do
+  shared_examples "renders new session template with 401 and errors" do
     before(:each) do
       User.create(username: 'jason', password: 'good_password')
       post :create, params: path_options
@@ -20,11 +20,15 @@ RSpec.describe SessionsController, type: :controller do
     end
 
     it "redirects to new_session_url" do
-      expect(response).to redirect_to new_session_url
+      expect(response).to render_template("new")
     end
 
     it "sets flash errors" do
       should set_flash[:errors]
+    end
+
+    it "should have 401 status" do
+      expect(response).to have_http_status(401)
     end
   end
 
@@ -32,17 +36,17 @@ RSpec.describe SessionsController, type: :controller do
     context "with invalid params" do
       context "with correct username, incorrect password" do
         let(:path_options) { { session: {username: 'jason', password: 'bad_password'}}}
-        it_behaves_like "redirects to new_session_url and sets flash errors"
+        it_behaves_like "renders new session template with 401 and errors"
       end
 
       context "with incorrect username, incorrect password" do
         let(:path_options) { { session: {username: 'jarmo', password: 'good_password'}}}
-        it_behaves_like "redirects to new_session_url and sets flash errors"
+        it_behaves_like "renders new session template with 401 and errors"
       end
 
       context "with username and password both incorrect" do
         let(:path_options) { { session: {username: 'jarmo', password: 'bad_password'}}}
-        it_behaves_like "redirects to new_session_url and sets flash errors"
+        it_behaves_like "renders new session template with 401 and errors"
       end
     end
 
