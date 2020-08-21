@@ -1,1 +1,11 @@
 <h2>Register</h2>
+
+<form class="" action= <%= users_url %> method="post">
+  <label for="username">Username</label>
+  <input type="text" name="user[username]" value="" id="username">
+
+  <label for="password">Password</label>
+  <input type="password" name="user[password]" value="" id="password">
+
+  <button type="submit" name="button">Register</button>
+</form>
