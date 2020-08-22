@@ -30,14 +30,115 @@ RSpec.feature "UserRegistrations", type: :feature do
     scenario 'user is displayed as logged in'
   end
 
+  shared_examples "renders new with 422 status" do
+    before(:all) do
+      @user = User.create(username: 'jason', password: 'good_password')
+    end
+    before(:each) do
+      visit new_user_url
+      fill_in 'username', with: params[:username]
+      fill_in 'password', with: params[:password]
+      click_on 'Register'
+    end
+    after(:all) do
+      @user.destroy
+    end
+
+    it "renders the new user template" do
+      expect(page).to have_content 'Register'
+    end
+
+    it "has 422 status" do
+      expect(page).to have_http_status(422)
+    end
+  end
+
+  shared_examples "has `username unavailable` error message" do
+    it 'displays correct error' do
+      @user = User.create(username: 'jason', password: 'good_password')
+      visit new_user_url
+      fill_in 'username', with: params[:username]
+      fill_in 'password', with: params[:password]
+      click_on 'Register'
+      expect(page).to have_content "already been taken"
+    end
+  end
+
+  shared_examples "has `username presence` error message" do
+    it 'displays correct error' do
+      @user = User.create(username: 'jason', password: 'good_password')
+      visit new_user_url
+      fill_in 'username', with: params[:username]
+      fill_in 'password', with: params[:password]
+      click_on 'Register'
+      expect(page).to have_content "can't be blank"
+    end
+  end
+
+  shared_examples "has password too short error message" do
+    it 'displays correct error' do
+      @user = User.create(username: 'jason', password: 'good_password')
+      visit new_user_url
+      fill_in 'username', with: params[:username]
+      fill_in 'password', with: params[:password]
+      click_on 'Register'
+      expect(page).to have_content "too short"
+    end
+  end
+
   feature 'registering a user with invalid inputs' do
-    scenario 'empty username and empty password'
-    scenario 'empty username and invalid (short) password'
-    scenario 'empty username and valid password'
-    scenario 'duplicate username and empty password'
-    scenario 'duplicate username and invalid (short) password'
-    scenario 'duplicate username and valid password'
-    scenario 'valid username and empty password'
-    scenario 'valid username and invalid (short) password'
+
+    feature 'empty username and empty password' do
+      let(:params) {{ username: "", password: ""}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username presence` error message"
+      it_behaves_like "has password too short error message"
+    end
+
+    feature 'empty username and invalid (short) password' do
+      let(:params) {{ username: "", password: "abcd"}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username presence` error message"
+      it_behaves_like "has password too short error message"
+
+    end
+
+    feature 'empty username and valid password' do
+      let(:params) {{ username: "", password: "long_password"}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username presence` error message"
+    end
+
+    feature 'duplicate username and empty password' do
+      let(:params) {{ username: "jason", password: ""}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username unavailable` error message"
+      it_behaves_like "has password too short error message"
+    end
+
+    feature 'duplicate username and invalid (short) password' do
+      let(:params) {{ username: "jason", password: "abcd"}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username unavailable` error message"
+      it_behaves_like "has password too short error message"
+    end
+
+    feature 'duplicate username and valid password' do
+      let(:params) {{ username: "jason", password: "long_password"}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has `username unavailable` error message"
+    end
+
+    feature 'valid username and empty password' do
+      let(:params) {{ username: "new_user", password: ""}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has password too short error message"
+    end
+
+    feature 'valid username and invalid (short) password' do
+      let(:params) {{ username: "new_user", password: "abcd"}}
+      it_behaves_like "renders new with 422 status"
+      it_behaves_like "has password too short error message"
+    end
   end
 end
