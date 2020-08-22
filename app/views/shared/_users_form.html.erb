@@ -1,0 +1,18 @@
+<% path = (source == :session ? session_url : users_url) %>
+<% message = (source == :session ? "Log in" : "Register") %>
+
+<form class="" action="<%= path %>" method="post">
+  <input
+    type="hidden"
+    name="authenticity_token"
+    value="<%= form_authenticity_token %>">
+
+  <label for="username">Username</label>
+  <input type="text" name="user[username]" value="" id="username">
+
+  <label for="password">Password</label>
+  <input type="password" name="user[password]" value="" id="password">
+
+  <input type="submit" name="" value="<%= message %>">
+
+</form>
