@@ -1,3 +1,9 @@
 <h2>Log in!</h2>
 
+<% if flash.present? %>
+  <% flash.each do |type, msg| %>
+  <div class="flash-display"><%= type %>: <%= msg %></div>
+  <% end %>
+<% end %>
+
 <%= render 'shared/users_form', source: :session %>
