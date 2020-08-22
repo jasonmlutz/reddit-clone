@@ -23,8 +23,8 @@ RSpec.describe SessionsController, type: :controller do
       expect(response).to render_template("new")
     end
 
-    it "sets flash errors" do
-      should set_flash[:errors]
+    it "sets flash.now :alert" do
+      should set_flash.now[:alert]
     end
 
     it "should have 401 status" do
