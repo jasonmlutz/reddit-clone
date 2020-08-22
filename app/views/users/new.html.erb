@@ -9,3 +9,8 @@
 <% end %>
 
 <%= render 'shared/users_form', source: :user %>
+
+<br>
+<br>
+
+Already registered? <%= button_to 'Log in', new_session_url, method: :get %>
