@@ -1,3 +1,11 @@
 <h2>Register</h2>
 
+<% if flash[:errors].present? %>
+  <% flash[:errors].each do |error| %>
+    <div class="flash-display">
+      <%= error %>
+    </div>
+  <% end %>
+<% end %>
+
 <%= render 'shared/users_form', source: :user %>

@@ -16,8 +16,8 @@ RSpec.describe UsersController, type: :controller do
     it "renders new template" do
       expect(response).to render_template("new")
     end
-    it "sets flash errors" do
-      should set_flash[:errors]
+    it "sets flash.now errors" do
+      should set_flash.now[:errors]
     end
     it "has 422 status" do
       expect(response).to have_http_status(422)
@@ -56,7 +56,7 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to render_template("new")
         end
         it "sets flash errors" do
-          should set_flash[:errors]
+          should set_flash.now[:errors]
         end
         it "has 422 status" do
           expect(response).to have_http_status(422)
