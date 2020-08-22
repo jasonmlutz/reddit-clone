@@ -2,11 +2,7 @@
 <% message = (source == :session ? "Log in" : "Register") %>
 
 <form class="" action="<%= path %>" method="post">
-  <input
-    type="hidden"
-    name="authenticity_token"
-    value="<%= form_authenticity_token %>">
-
+  <%= auth_token %>
   <label for="username">Username</label>
   <input type="text" name="user[username]" value="" id="username">
 
