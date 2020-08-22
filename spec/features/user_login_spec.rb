@@ -24,9 +24,41 @@ RSpec.feature "UserLogins", type: :feature do
     scenario 'user is displayed as logged in'
   end
 
+  shared_examples "renders new session with errors and 401 status" do
+    before(:each) do
+      @user = User.create(username: 'jason', password: 'good_password')
+      visit new_session_url
+      fill_in 'username', with: params[:username]
+      fill_in 'password', with: params[:password]
+      click_on 'Log in'
+    end
+
+    it "renders the new session template" do
+      expect(page).to have_content 'Log in'
+    end
+
+    it "displays flash alert" do
+      expect(page).to have_content 'alert:'
+    end
+
+    it "has 401 status" do
+      expect(page).to have_http_status(401)
+    end
+
+  end
+
   feature 'signing in a user with invalid credentials' do
-    scenario 'empty username and empty password'
-    scenario 'valid username and empty password'
-    scenario 'valid username and incorrect password'
+    feature 'empty username and empty password' do
+      let(:params) {{ username: "", password: "" }}
+      it_behaves_like "renders new session with errors and 401 status"
+    end
+    feature 'valid username and empty password' do
+      let(:params) {{ username: "jason", password: "" }}
+      it_behaves_like "renders new session with errors and 401 status"
+    end
+    feature 'valid username and incorrect password' do
+      let(:params) {{ username: "jason", password: "bad_password" }}
+      it_behaves_like "renders new session with errors and 401 status"
+    end
   end
 end
