@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.feature "UserNavigations", type: :feature do
+  scenario 'logout button is not present' do
+    visit new_user_url
+    expect(page).to_not have_selector(:link_or_button, 'Logout')
+  end
+
   feature 'new session -> new user' do
     before(:each) do
       visit new_session_url

@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.feature "UserLogins", type: :feature do
+  scenario 'logout button is not present' do
+    visit new_session_url
+    expect(page).to_not have_selector(:link_or_button, 'Logout')
+  end
+  
   scenario 'has a new session page' do
     visit new_session_url
     expect(page).to have_content 'Log in!'
