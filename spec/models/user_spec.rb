@@ -23,6 +23,7 @@ RSpec.describe User, type: :model do
   it { should validate_presence_of(:password_digest).with_message("Password can\'t be blank") }
   it { should validate_length_of(:password).is_at_least(6) }
   it {should validate_presence_of(:session_token)}
+  it { should have_many(:subs) }
 
   describe '#is_password?' do
     it 'identifies a correct password' do
@@ -84,5 +85,5 @@ RSpec.describe User, type: :model do
     end
   end
 
-  
+
 end

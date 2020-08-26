@@ -20,6 +20,8 @@ class User < ApplicationRecord
 
   after_initialize :ensure_session_token
 
+  has_many :subs, inverse_of: 'moderator', dependent: :destroy
+
   def password=(password)
     @password = password
     self.password_digest = BCrypt::Password.create(password)
