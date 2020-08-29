@@ -11,6 +11,7 @@
 #
 FactoryBot.define do
   factory :user do
-    
+    username { "jason-test" }
+    password { "good_password" }
   end
 end

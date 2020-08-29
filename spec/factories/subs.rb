@@ -11,6 +11,7 @@
 #
 FactoryBot.define do
   factory :sub do
-    
+    title { "Cats-test" }
+    description { "All about our favorite feline companions!" }
   end
 end
