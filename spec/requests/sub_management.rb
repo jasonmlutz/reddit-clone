@@ -23,18 +23,26 @@ RSpec.describe "Subs management", type: :request do
       User.destroy_all
       create(:user)
       post session_url, params: { user: attributes_for(:user) }
-      post subs_url, params: path_options
     end
 
     it "redirects to new_sub_url" do
+      post subs_url, params: path_options
       expect(response).to render_template("new")
     end
 
     it "sets flash.now :alert" do
-      should set_flash.now[:alert]
+      expect_any_instance_of(SubsController).
+        to receive_message_chain(:flash, :now, :[]=).
+        with(:alert, "One or more paramaters missing.")
+
+      flash = instance_double("flash").as_null_object
+      allow_any_instance_of(SubsController).to receive(:flash).and_return(flash)
+
+      post subs_url, params: path_options
     end
 
     it "should have 422 status" do
+      post subs_url, params: path_options
       expect(response).to have_http_status(422)
     end
   end
