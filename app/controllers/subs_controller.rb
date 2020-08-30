@@ -1,5 +1,5 @@
 class SubsController < ApplicationController
-  skip_before_action :require_login, only: [:index]
+  skip_before_action :require_login, only: [:index, :show]
   def index
     render :index
   end
@@ -24,7 +24,13 @@ class SubsController < ApplicationController
   end
 
   def show
-
+    @sub = Sub.find_by(id: params[:id])
+    if @sub
+      render :show
+    else
+      flash.now[:alert] = 'No such sub!'
+      render :index, status: :not_found
+    end
   end
 
   def update

@@ -18,7 +18,7 @@ RSpec.describe "Subs management", type: :request do
     end
   end
 
-  shared_examples "renders new sub template with 422 and alert" do
+  shared_examples "redirects to new sub template with 422 and alert" do
     before(:each) do
       User.destroy_all
       create(:user)
@@ -69,18 +69,47 @@ RSpec.describe "Subs management", type: :request do
     context 'with invalid params' do
       context 'with title missing' do
         let(:path_options) { { sub: {description: 'a sub without a title'}}}
-        it_behaves_like "renders new sub template with 422 and alert"
+        it_behaves_like "redirects to new sub template with 422 and alert"
       end
 
       context 'with description missing' do
         let(:path_options) { { sub: {title: 'No Description!'}}}
-        it_behaves_like "renders new sub template with 422 and alert"
+        it_behaves_like "redirects to new sub template with 422 and alert"
       end
     end
   end
 
   describe 'GET #show' do
-    it 'displays the show template' do
+    context "with valid sub id" do
+      it 'displays the show template' do
+        @user = create(:user)
+        @sub = create(:sub, user_id: @user.id)
+        get sub_url(@sub)
+        expect(response).to render_template("show")
+      end
+    end
+
+    context "with invalid sub id" do
+      it "renders sub index" do
+        get sub_url(-1)
+        expect(response).to render_template("index")
+      end
+
+      it "sets flash.now alert" do
+        expect_any_instance_of(SubsController).
+          to receive_message_chain(:flash, :now, :[]=).
+          with(:alert, "No such sub!")
+
+        flash = instance_double("flash").as_null_object
+        allow_any_instance_of(SubsController).to receive(:flash).and_return(flash)
+
+        get sub_url(-1)
+      end
+
+      it "has 404 status" do
+        get sub_url(-1)
+        expect(response).to have_http_status(404)
+      end
     end
   end
 
