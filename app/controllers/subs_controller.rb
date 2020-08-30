@@ -1,5 +1,7 @@
 class SubsController < ApplicationController
   skip_before_action :require_login, only: [:index, :show]
+  before_action :require_moderator, only: [:edit]
+
   def index
     render :index
   end
@@ -20,7 +22,12 @@ class SubsController < ApplicationController
   end
 
   def edit
+    @sub = Sub.find_by(id: params[:id])
+    if @sub
+      render :edit
+    else
 
+    end
   end
 
   def show
@@ -45,5 +52,13 @@ class SubsController < ApplicationController
 
   def sub_params
     params.require(:sub).permit(:title, :description)
+  end
+
+  def require_moderator
+    @sub = Sub.find_by(id: params[:id])
+    if @sub && @sub.moderator != current_user
+      flash.now[:alert] = 'Edit access requires moderator status.'
+      render :index, status: :unauthorized
+    end
   end
 end

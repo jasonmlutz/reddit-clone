@@ -114,7 +114,54 @@ RSpec.describe "Subs management", type: :request do
   end
 
   describe 'GET #edit' do
-    it 'displays the edit template'
+    context "with valid sub id" do
+      context "logged in as moderator" do
+        before(:each) do
+          @moderator = create(:user)
+          @sub = create(:sub, user_id: @moderator.id)
+        end
+        it "renders edit template" do
+          post session_url, params: { user: { username: @moderator.username, password: @moderator.password} }
+          get edit_sub_url(@sub)
+
+          expect(response).to render_template(:edit)
+        end
+      end
+
+      context "logged in not as moderator" do
+        before(:all) do
+          @moderator = create(:user)
+          @sub = create(:sub, user_id: @moderator.id)
+          @user = create(:user, username: 'jarmo')
+          post session_url, params: { user: { username: @user.username, password: @user.password} }
+
+        end
+        it "has 401 status" do
+          get edit_sub_url(@sub)
+          expect(response).to have_http_status(401)
+        end
+        it "sets flash.now :alert" do
+          expect_any_instance_of(SubsController).
+            to receive_message_chain(:flash, :now, :[]=).
+            with(:alert, "Edit access requires moderator status.")
+
+          flash = instance_double("flash").as_null_object
+          allow_any_instance_of(SubsController).to receive(:flash).and_return(flash)
+
+          get edit_sub_url(@sub)
+        end
+        it "renders subs index" do
+          get edit_sub_url(@sub)
+          expect(response).to render_template :index
+        end
+      end
+    end
+
+    context "with invalid sub id" do
+      it "renders sub index"
+      it "sets flash.now alert"
+      it "has 404 status"
+    end
   end
 
   describe 'DELETE #destroy' do
