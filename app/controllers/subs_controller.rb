@@ -10,8 +10,8 @@ class SubsController < ApplicationController
     if @sub.save
       redirect_to sub_url(@sub)
     else
-      flash.now[:alert] = 'Invalid submission. Title and description are required.'
-      redirect_to new_sub_url
+      flash.now[:alert] = 'One or more paramaters missing.'
+      render :new, status: :unprocessable_entity
     end
   end
 

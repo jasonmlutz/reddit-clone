@@ -18,8 +18,29 @@ RSpec.describe "Subs management", type: :request do
     end
   end
 
+  shared_examples "renders new sub template with 422 and alert" do
+    before(:each) do
+      User.destroy_all
+      create(:user)
+      post session_url, params: { user: attributes_for(:user) }
+      post subs_url, params: path_options
+    end
+
+    it "redirects to new_sub_url" do
+      expect(response).to render_template("new")
+    end
+
+    it "sets flash.now :alert" do
+      should set_flash.now[:alert]
+    end
+
+    it "should have 422 status" do
+      expect(response).to have_http_status(422)
+    end
+  end
+
   describe 'POST #create' do
-    describe 'with valid params' do
+    context 'with valid params' do
       before(:all) do
         create(:user)
         build(:sub)
@@ -37,8 +58,16 @@ RSpec.describe "Subs management", type: :request do
       end
     end
 
-    describe 'with invalid params' do
-      it 'renders the new template with errors'
+    context 'with invalid params' do
+      context 'with title missing' do
+        let(:path_options) { { sub: {description: 'a sub without a title'}}}
+        it_behaves_like "renders new sub template with 422 and alert"
+      end
+
+      context 'with description missing' do
+        let(:path_options) { { sub: {title: 'No Description!'}}}
+        it_behaves_like "renders new sub template with 422 and alert"
+      end
     end
   end
 
