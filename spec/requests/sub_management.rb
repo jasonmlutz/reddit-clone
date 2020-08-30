@@ -11,7 +11,7 @@ RSpec.describe "Subs management", type: :request do
 
   describe 'GET #new' do
     it 'displays the new template' do
-      @user = create(:user)
+      create(:user)
       post session_url, params: { user: attributes_for(:user) }
       get new_sub_url
       expect(response).to render_template(:new)
