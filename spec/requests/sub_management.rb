@@ -18,7 +18,7 @@ RSpec.describe "Subs management", type: :request do
     end
   end
 
-  shared_examples "redirects to new sub template with 422 and alert" do
+  shared_examples "shared-example: title or description missing" do
     before(:each) do
       User.destroy_all
       create(:user)
@@ -69,12 +69,12 @@ RSpec.describe "Subs management", type: :request do
     context 'with invalid params' do
       context 'with title missing' do
         let(:path_options) { { sub: {description: 'a sub without a title'}}}
-        it_behaves_like "redirects to new sub template with 422 and alert"
+        it_behaves_like "shared-example: title or description missing"
       end
 
       context 'with description missing' do
         let(:path_options) { { sub: {title: 'No Description!'}}}
-        it_behaves_like "redirects to new sub template with 422 and alert"
+        it_behaves_like "shared-example: title or description missing"
       end
     end
   end
@@ -134,16 +134,15 @@ RSpec.describe "Subs management", type: :request do
         end
       end
 
-      context "logged in not as moderator" do
+      shared_examples "shared-example: logged in as not moderator OR not logged in" do
         before(:all) do
           User.destroy_all
           Sub.destroy_all
-          @moderator = create(:user)
+          @moderator = create(:user, username: 'moderator')
           @sub = create(:sub, user_id: @moderator.id)
-          @user = create(:user, username: 'jarmo')
-          post session_url, params: { user: { username: @user.username, password: @user.password} }
-
+          @user = create(:user)
         end
+
         it "has 401 status" do
           get edit_sub_url(@sub)
           expect(response).to have_http_status(401)
@@ -163,17 +162,24 @@ RSpec.describe "Subs management", type: :request do
           expect(response).to render_template :index
         end
       end
+
+      context "logged in not as moderator" do
+        before(:all) do
+          post session_url, params: { user: attributes_for(:user)}
+        end
+        it_behaves_like "shared-example: logged in as not moderator OR not logged in"
+      end
+
+      context "not logged in" do
+        it_behaves_like "shared-example: logged in as not moderator OR not logged in"
+      end
     end
 
     context "with invalid sub id" do
       before(:all) do
         User.destroy_all
         Sub.destroy_all
-        
       end
-      it "renders sub index"
-      it "sets flash.now alert"
-      it "has 404 status"
     end
   end
 

@@ -1,5 +1,5 @@
 class SubsController < ApplicationController
-  skip_before_action :require_login, only: [:index, :show]
+  skip_before_action :require_login, only: [:index, :show, :edit]
   before_action :require_moderator, only: [:edit]
 
   def index
