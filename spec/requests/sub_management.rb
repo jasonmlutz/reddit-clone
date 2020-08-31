@@ -81,6 +81,10 @@ RSpec.describe "Subs management", type: :request do
 
   describe 'GET #show' do
     context "with valid sub id" do
+      before(:each) do
+        User.destroy_all
+        Sub.destroy_all
+      end
       it 'displays the show template' do
         @user = create(:user)
         @sub = create(:sub, user_id: @user.id)
@@ -117,6 +121,8 @@ RSpec.describe "Subs management", type: :request do
     context "with valid sub id" do
       context "logged in as moderator" do
         before(:each) do
+          User.destroy_all
+          Sub.destroy_all
           @moderator = create(:user)
           @sub = create(:sub, user_id: @moderator.id)
         end
@@ -130,6 +136,8 @@ RSpec.describe "Subs management", type: :request do
 
       context "logged in not as moderator" do
         before(:all) do
+          User.destroy_all
+          Sub.destroy_all
           @moderator = create(:user)
           @sub = create(:sub, user_id: @moderator.id)
           @user = create(:user, username: 'jarmo')
@@ -158,6 +166,11 @@ RSpec.describe "Subs management", type: :request do
     end
 
     context "with invalid sub id" do
+      before(:all) do
+        User.destroy_all
+        Sub.destroy_all
+        
+      end
       it "renders sub index"
       it "sets flash.now alert"
       it "has 404 status"
