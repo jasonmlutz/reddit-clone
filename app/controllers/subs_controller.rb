@@ -26,7 +26,13 @@ class SubsController < ApplicationController
     if @sub
       render :edit
     else
-
+      if current_user
+        flash.now[:alert] = "Sub not found. Try again with valid sub id."
+        render :index, status: :not_found
+      else
+        flash.now[:alert] = "Sub not found. Try again with valid sub id and moderator status."
+        render :index, status: :not_found
+      end
     end
   end
 

@@ -176,9 +176,61 @@ RSpec.describe "Subs management", type: :request do
     end
 
     context "with invalid sub id" do
-      before(:all) do
-        User.destroy_all
-        Sub.destroy_all
+      context "not logged in" do
+        before(:all) do
+          User.destroy_all
+          Sub.destroy_all
+        end
+        it "sets flash alert: no sub, retry and log in" do
+          expect_any_instance_of(SubsController).
+            to receive_message_chain(:flash, :now, :[]=).
+            with(:alert, "Sub not found. Try again with valid sub id and moderator status.")
+
+          flash = instance_double("flash").as_null_object
+          allow_any_instance_of(SubsController).to receive(:flash).and_return(flash)
+
+          get edit_sub_url(-1)
+        end
+
+        it "renders subs index" do
+          get edit_sub_url(-1)
+          expect(response).to render_template :index
+        end
+
+        it "has 404 response" do
+          get edit_sub_url(-1)
+          expect(response).to have_http_status(404)
+        end
+      end
+
+      context "logged in" do
+        before(:all) do
+          User.destroy_all
+          Sub.destroy_all
+          @user = create(:user)
+          post session_url, params: { user: { username: @user.username, password: @user.password} }
+        end
+
+        it "sets flash alert: no sub" do
+          expect_any_instance_of(SubsController).
+            to receive_message_chain(:flash, :now, :[]=).
+            with(:alert, "Sub not found. Try again with valid sub id.")
+
+          flash = instance_double("flash").as_null_object
+          allow_any_instance_of(SubsController).to receive(:flash).and_return(flash)
+
+          get edit_sub_url(-1)
+        end
+
+        it "renders subs index" do
+          get edit_sub_url(-1)
+          expect(response).to render_template :index
+        end
+
+        it "has 404 response" do
+          get edit_sub_url(-1)
+          expect(response).to have_http_status(404)
+        end
       end
     end
   end
