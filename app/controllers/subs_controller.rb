@@ -56,7 +56,7 @@ class SubsController < ApplicationController
 
   def require_moderator
     @sub = Sub.find_by(id: params[:id])
-    if @sub && @sub.moderator != current_user
+    if @sub && @sub.moderator && @sub.moderator != current_user
       flash.now[:alert] = 'Edit access requires moderator status.'
       render :index, status: :unauthorized
     end
