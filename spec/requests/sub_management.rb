@@ -235,6 +235,10 @@ RSpec.describe "Subs management", type: :request do
     end
   end
 
+  describe 'POST #update' do
+    it 'updates the sub'
+  end
+
   describe 'DELETE #destroy' do
     it 'deletes the sub'
   end
