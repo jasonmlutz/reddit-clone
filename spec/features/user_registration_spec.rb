@@ -27,7 +27,10 @@ RSpec.feature "UserRegistrations", type: :feature do
       expect(user).to_not be_nil
     end
 
-    scenario 'user is displayed as logged in'
+    scenario 'user is displayed as logged in' do
+      visit subs_url
+      expect(page).to have_content 'Current user: jason'
+    end
   end
 
   shared_examples "renders new with 422 status" do

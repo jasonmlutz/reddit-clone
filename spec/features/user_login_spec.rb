@@ -5,7 +5,7 @@ RSpec.feature "UserLogins", type: :feature do
     visit new_session_url
     expect(page).to_not have_selector(:link_or_button, 'Logout')
   end
-  
+
   scenario 'has a new session page' do
     visit new_session_url
     expect(page).to have_content 'Log in!'
@@ -26,7 +26,10 @@ RSpec.feature "UserLogins", type: :feature do
     scenario 'shows username on show page' do
       expect(page).to have_content 'jason'
     end
-    scenario 'user is displayed as logged in'
+    scenario 'user is displayed as logged in' do
+      visit subs_url
+      expect(page).to have_content 'Current user: jason'
+    end
   end
 
   shared_examples "renders new session with errors and 401 status" do
